@@ -1,286 +1,283 @@
 
-<h1 align="center">Luma3DS Custom Firmware</h1>
+<h1 align="center">EZ Flash Junior Kernel Mod</h1>
 
 <p align="center">
-  <strong>System Patching. Firmware Control. Homebrew Integration.</strong>
+  <strong>Kernel Reverse Engineering. Firmware Patching. Cartridge Development.</strong>
 </p>
 
 <p align="center">
-  Nintendo 3DS / 2DS · Custom Firmware · System Software Development
+  Nintendo Game Boy · Game Boy Color · Cartridge Firmware
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/platform-Nintendo%203DS%20%2F%202DS-A63A55?style=flat-square">
-  <img src="https://img.shields.io/badge/category-Custom%20Firmware-A63A55?style=flat-square">
-  <img src="https://img.shields.io/badge/license-GPL--3.0-555555?style=flat-square">
-  <img src="https://img.shields.io/badge/version-13.5-333333?style=flat-square">
+  <img src="https://img.shields.io/badge/platform-Game%20Boy%20%2F%20Game%20Boy%20Color-A63A55?style=flat-square">
+  <img src="https://img.shields.io/badge/category-Cartridge%20Firmware-A63A55?style=flat-square">
+  <img src="https://img.shields.io/badge/license-AGPL--3.0-555555?style=flat-square">
+  <img src="https://img.shields.io/badge/architecture-SM83-333333?style=flat-square">
 </p>
 
 ## Overview
 
-Luma3DS is a custom firmware project for the Nintendo 3DS family of consoles. It patches and reimplements significant parts of the system software, providing an extended software environment for system customization, homebrew applications, debugging, and firmware-level modifications.
+EZ Flash Junior Kernel Mod is an open-source reverse-engineering and modification project for the EZ-Flash Junior flash cartridge.
 
-The project is built around a combination of low-level firmware components, ARM9 and ARM11 code, kernel extensions, and reimplemented system modules.
+The cartridge uses an internal menu and operating-system firmware known as the kernel. This software runs on the Game Boy CPU architecture and manages cartridge initialization, microSD access, ROM selection, save operations, and system configuration.
 
-One of its defining components is Rosalina, an integrated overlay and system management interface that provides access to multiple firmware features.
+The project analyzes the original kernel binary and introduces additional functionality through independently developed patches and firmware modifications.
 
-Luma3DS requires boot9strap as its underlying boot environment.
+It supports multiple original kernel versions, including:
+
+- 1.04e (FW4)
+- 1.05e-0731 (FW5)
+- 1.05e-0918 (FW5)
+
+The modified kernel is loaded from the cartridge's microSD card as `ezgb.dat`. The standard kernel modification process does not require rewriting the console firmware or permanently flashing the handheld.
 
 ## Technical Architecture
 
-Luma3DS uses a layered architecture consisting of several independently developed components.
+The project operates at the cartridge firmware level.
 
-### ARM9 and ARM11
+Its architecture consists of several technical layers.
 
-The core firmware loader and settings interface operate at the bare-metal level.
+### Kernel Binary
 
-Their responsibilities include:
+The original EZ-Flash Junior kernel is distributed as a compiled binary.
 
-- Firmware loading and initialization.
-- Official firmware patching.
-- Process9 code modification.
-- Injection of custom system components.
-- Payload chainloading.
-- Firmware configuration management.
+The project provides reverse-engineered disassembly, symbol annotations, and reconstruction tools for analyzing its internal functionality.
 
-### Kernel Extension
+### SM83 Processor Environment
 
-The `k11_extension` component extends the ARM11 NATIVE_FIRM kernel.
+The kernel executes on the Game Boy's SM83 processor.
 
-Its functionality includes:
+The implementation interacts with cartridge hardware, memory banking, storage operations, and the console's launch process.
 
-- System call (SVC) hooking.
-- Additional SVC implementation.
-- Inter-process communication hooking.
-- Kernel-level process interaction.
-- Support for selected debugging and overlay operations.
+### Firmware Patching
 
-### System Modules
+Individual features are implemented as patches against specific kernel versions.
 
-Luma3DS includes reimplementations of selected Nintendo 3DS system modules.
+The patching workflow includes:
 
-These components integrate with the operating system and provide additional control over process management, loading, and system services.
+- Binary disassembly.
+- Function identification.
+- Code injection.
+- Address verification.
+- IPS patch generation.
+- Reassembly and validation.
+
+### Cartridge Hardware Interface
+
+The project investigates the cartridge's hardware communication mechanisms, including:
+
+- FPGA control registers.
+- SD sector access.
+- Memory banking.
+- PSRAM save storage.
+- Cartridge initialization.
+- ROM launch behavior.
 
 ## Core Components
 
 | Component | Description | Technical Role |
 |---|---|---|
-| ARM9 | Bare-metal firmware component | Firmware loading and initialization |
-| ARM11 | System-level firmware component | Firmware configuration and patching |
-| k11_extension | ARM11 kernel extension | Kernel hooks and additional SVCs |
-| Rosalina | Integrated overlay and system interface | Runtime system management |
-| Loader | System module | Application and homebrew loading |
-| PXI | Reimplemented system module | ARM9–ARM11 communication |
-| SM | Service Manager module | Service access management |
-| PM | Process Manager module | Process lifecycle management |
-| Plugin Loader | Game plugin loading component | 3GX plugin integration |
+| Kernel Binary | Original cartridge operating firmware | System initialization |
+| Kernel Disassembly | Annotated firmware reconstruction | Reverse engineering |
+| Kernel Patches | IPS-based modifications | Firmware customization |
+| Injection Tools | Code insertion utilities | Kernel modification |
+| Build Scripts | Automated reconstruction tools | Firmware generation |
+| Configuration | EZGB.CFG | Runtime settings |
+| Bootloader Mod | Experimental startup modification | Cartridge boot management |
+| SameBoy FPGA Stub | Development and testing support | Emulation environment |
+| Hardware Documentation | Registers and memory maps | Hardware analysis |
 
 ## Key Features
 
-### Firmware Modification
+### Kernel Interface Improvements
 
-- System software patching across the Nintendo 3DS family.
-- Reimplementation of selected system software components.
-- Custom firmware configuration through `config.ini`.
-- Support for user-provided patches and system module replacements.
+- Sorted file browser with directories displayed before files.
+- Continuous scrolling beyond screen boundaries.
+- Improved cursor positioning and page navigation.
+- Faster input response through frame-based button sampling.
+- Improved visual rendering and screen updates.
 
-### Rosalina System Interface
+### Interface and Configuration
 
-- Integrated system overlay activated by `L + Down + Select` by default.
-- Runtime configuration and system management.
-- Screenshot capture and screen filter controls.
-- Input redirection and network time synchronization.
-- Access to selected debugging functions.
+- Optional 12-pixel menu font.
+- Multiple display themes.
+- Custom background and foreground colors.
+- Improved file identification through icons.
+- Configurable ROM name cleanup.
+- Filtering of unnecessary filesystem entries.
 
-### Homebrew and Payload Management
+### ROM and Save Management
 
-- Native homebrew application support.
-- 3DSX homebrew loading.
-- Chainloading of additional firmware payloads.
-- Support for user-provided system modifications.
-- 3GX game plugin loading.
+- Individual ROM management menu.
+- Save backup and restoration.
+- Save backup deletion.
+- ROM favorites and launch counters.
+- Sorting by launch frequency.
+- Last-launched ROM recovery.
+- Configurable automatic launch.
 
-### Developer and Debugging Tools
+### Boot and Storage Management
 
-- Integrated GDB debugging stub.
-- Process inspection capabilities.
-- Break-on-start debugging functionality.
-- Kernel-level debugging interfaces.
-- Tools for reverse engineering and homebrew development.
+- Configurable fast launch.
+- Faster ROM loading on supported FW5 configurations.
+- RTC backup and restoration through SD storage.
+- Handling of invalid battery-backed records.
+- Improved boot menu behavior.
+- Experimental bootloader modifications.
 
-## Rosalina
+## Kernel Compatibility
 
-Rosalina is one of the central components of Luma3DS.
-
-It provides an overlay interface for interacting with the running system without requiring a separate application for each supported function.
-
-| Function | Description |
-|---|---|
-| System Menu | Access to firmware management options |
-| Screen Filters | Display color and visual adjustments |
-| Screenshot Capture | Capture console screen output |
-| Input Redirection | External input device support |
-| Network Time | NTP-based date and time synchronization |
-| GDB Server | Remote debugging functionality |
-| Process Management | Selected process-level operations |
-| System Configuration | Runtime firmware settings |
-
-Default activation combination:
-
-`L + Down + Select`
-
-The combination can be customized through the Rosalina configuration interface.
-
-## Firmware Configuration
-
-Luma3DS uses configuration files to control selected system behaviors.
-
-### Configuration File
-
-`/luma/config.ini`
-
-The file contains configurable firmware options.
-
-When Luma3DS is launched from CTRNAND without an SD card, the configuration location is:
-
-`/rw/luma/config.ini`
-
-### Payload Management
-
-Additional firmware payloads are stored in:
-
-`/luma/payloads/`
-
-Payload files use the `.firm` extension.
-
-The chainloader menu can be accessed by pressing `Start` during boot or through the configuration menu.
-
-When only one payload is present, the selection menu may be skipped.
-
-## Platform Compatibility
-
-| Platform | Hardware Family | Compatibility |
+| Kernel Version | Firmware Family | Patch Support |
 |---|---|---|
-| Nintendo 3DS | Original 3DS | Supported |
-| Nintendo 3DS XL | Original 3DS XL | Supported |
-| New Nintendo 3DS | New 3DS | Supported |
-| New Nintendo 3DS XL | New 3DS XL | Supported |
-| Nintendo 2DS | Original 2DS | Supported |
-| New Nintendo 2DS XL | New 2DS XL | Supported |
+| 1.04e | FW4 | Supported |
+| 1.05e-0731 | FW5 | Supported |
+| 1.05e-0918 | FW5 | Supported |
 
-Luma3DS targets the Nintendo 3DS family, including its 2DS variants.
+The project uses separate patch packages for each supported kernel revision.
 
-The firmware requires boot9strap. Specific installation and system firmware requirements should be verified against the official project documentation.
+The 1.05e-0731 build is the primary development target, with features ported to other supported kernel versions.
 
-## Installation and Configuration
+The 1.04e kernel can also operate on FW5 cartridges.
+
+Always match the patch to the appropriate original kernel binary.
+
+## Firmware Installation and Configuration
 
 ### Prerequisites
 
-- Nintendo 3DS family console.
-- Existing boot9strap installation.
-- Compatible SD card.
-- Official Luma3DS release archive.
-- Access to the console's SD card filesystem.
+- EZ-Flash Junior cartridge.
+- Compatible microSD card.
+- Original EZ-Flash Junior kernel file.
+- Matching IPS patch.
+- IPS patching utility.
+- Access to the cartridge filesystem.
 
-### Installation Overview
+### Standard Kernel Modification
 
-1. Verify that boot9strap is installed and functioning.
-2. Obtain the official Luma3DS release archive.
-3. Extract the release files onto the root of the SD card.
-4. Replace existing files and merge folders where required.
-5. Insert the SD card and start the console.
-6. Verify the firmware configuration menu.
+1. Obtain the original kernel file from the official EZ-Flash Junior firmware package.
+2. Identify the kernel revision.
+3. Select the corresponding IPS patch.
+4. Apply the patch using a compatible IPS patching utility.
+5. Copy the resulting `ezgb.dat` to the microSD card root.
+6. Start the cartridge and verify the modified kernel version on the HELP screen.
+
+The original kernel file should be retained so the standard configuration can be restored.
+
+### Configuration
+
+The configuration file is located at:
+
+`/EZGB.CFG`
+
+Available configuration areas include:
+
+- Interface appearance.
+- Font selection.
+- File browser behavior.
+- Fast launch.
+- ROM selection.
+- RTC backup.
+- Boot ROM handling.
+- Display themes.
 
 ### Firmware Verification
 
-Press `Select` during boot to access the Luma3DS configuration menu.
+The HELP tab displays the kernel revision and modification version.
 
-Verify that the expected firmware version is displayed and that the selected configuration options are correct.
+This information can be used to identify the active modified kernel.
 
-### Updating
+### Experimental Bootloader Modification
 
-Obtain the latest release from the official Luma3DS repository and replace the corresponding files on the SD card.
+The project also contains an experimental firmware modification introducing a new bootloader with fast launch, kernel selection, and SD error recovery on a supported FW5 configuration.
 
-Review release notes before updating.
+This modification is separate from the standard reversible kernel patch and requires particular care because an unsuccessful firmware modification can render the cartridge unusable.
 
 ## Technical Specifications
 
 | Parameter | Details |
 |---|---|
-| Project | Luma3DS |
-| Platform | Nintendo 3DS / 2DS |
-| Software Type | Custom Firmware |
-| Latest Release | v13.5 |
-| Core Architecture | ARM9 / ARM11 |
-| Kernel Extension | k11_extension |
-| System Interface | Rosalina |
-| Boot Environment | boot9strap |
-| Firmware Format | FIRM |
-| Configuration | config.ini |
-| Development Languages | C / C++ / Assembly |
-| License | GPL-3.0 with documented exceptions |
-| Source Repository | LumaTeam/Luma3DS |
+| Project | EZ Flash Junior Kernel Mod |
+| Target Hardware | EZ-Flash Junior |
+| Console Compatibility | Game Boy / Game Boy Color |
+| Software Type | Cartridge Firmware Modification |
+| Processor | SM83 |
+| Original Firmware | EZ-Flash Junior Kernel |
+| Supported Revisions | 1.04e / 1.05e |
+| Patch Format | IPS |
+| Configuration | EZGB.CFG |
+| Kernel File | ezgb.dat |
+| Development Languages | C / Python / Assembly |
+| Build Tools | RGBDS and project utilities |
+| License | AGPL-3.0 for project contributions |
+| Official Repository | lukesau/ezgb |
 
-## Development and Build Environment
+## Development Environment
 
-Luma3DS is an open-source firmware project with a source-based development workflow.
+The repository provides a development environment for reverse engineering and modifying the cartridge kernel.
 
-The official build environment includes:
+### Main Tools
 
-- Git.
-- makerom.
-- firmtool.
-- devkitARM.
-- libctru.
-- devkitPro development packages.
+- Python 3.
+- RGBDS.
+- MGBDIS.
+- SameBoy.
+- IPS patching utilities.
+- Custom injection scripts.
 
-The compiled firmware output is distributed as:
+### Repository Structure
 
-`boot.firm`
+| Directory | Purpose |
+|---|---|
+| `re/` | Kernel disassemblies |
+| `decomp/` | Reconstructed kernel sources |
+| `kernel/` | Feature implementations and injection tools |
+| `docs/` | Technical documentation |
+| `scripts/` | Build and patch automation |
+| `patches/kernel/` | Kernel modification patches |
+| `patches/sameboy/` | Emulator development patches |
 
-The release archive also includes associated homebrew components.
-
-Refer to the official source repository for build instructions and dependency requirements.
+Original proprietary firmware binaries are not redistributed by the project. Developers must provide their own firmware dump for reconstruction workflows.
 
 ## Frequently Asked Questions
 
-### What is Luma3DS?
+### Is this a Custom Firmware for the Game Boy Color?
 
-Luma3DS is custom firmware for the Nintendo 3DS family that patches and reimplements significant parts of the console's system software.
+No. It modifies the firmware of the EZ-Flash Junior cartridge rather than the internal system software of the Game Boy Color console.
 
-### Does Luma3DS support Nintendo 2DS?
+### Which consoles are compatible?
 
-Yes. The original Nintendo 2DS and New Nintendo 2DS XL belong to the supported Nintendo 3DS hardware family.
+The EZ-Flash Junior is designed for the original Game Boy and Game Boy Color cartridge environments. The project also documents behavior on additional compatible hardware.
 
-### What is Rosalina?
+### Does the standard modification flash the console?
 
-Rosalina is an integrated system overlay providing access to firmware configuration, screen controls, input redirection, debugging, and additional system functions.
+No. The modified kernel is loaded from the cartridge's microSD card as `ezgb.dat`.
 
-### Does Luma3DS require boot9strap?
+### Which kernel versions are supported?
 
-Yes. The official project identifies boot9strap as a required boot environment.
+The project supports the 1.04e, 1.05e-0731, and 1.05e-0918 kernel revisions through separate patches.
 
-### Where are firmware settings and payloads stored?
+### What is the experimental bootloader modification?
 
-The main configuration file is located at `/luma/config.ini`, while additional `.firm` payloads are stored in `/luma/payloads/`.
+It is a separate cartridge firmware modification that adds an alternative startup process, kernel selection, and additional boot functionality. It is distinct from the standard kernel patch.
 
 ## SEO Keywords
 
-Luma3DS custom firmware, Nintendo 3DS CFW, Luma3DS firmware installation, Nintendo 2DS custom firmware, Luma3DS Rosalina, 3DS system modification, boot9strap firmware, Nintendo 3DS homebrew, ARM11 kernel extension, Luma3DS configuration, 3DS firmware patching, Nintendo 3DS system modules, Luma3DS payload chainloader, 3DS homebrew environment, Rosalina system overlay, Luma3DS GDB debugging, Nintendo 3DS firmware development, 3DS system software modification, Luma3DS GitHub, Nintendo 3DS firmware architecture.
+EZ Flash Junior kernel mod, Game Boy Color cartridge firmware, EZ Flash Junior firmware, Game Boy cartridge kernel, EZGB firmware modification, Game Boy kernel reverse engineering, EZ Flash Junior IPS patch, SM83 firmware development, Game Boy cartridge development, EZ Flash Junior bootloader, Game Boy Color kernel patching, EZGB.CFG configuration, Game Boy cartridge firmware analysis, EZ Flash Junior kernel update, Game Boy SD cartridge software, Game Boy firmware disassembly, EZ Flash Junior ROM browser, Game Boy cartridge reverse engineering, EZ Flash Junior GitHub, Game Boy Color system software.
 
 ## Technical References
 
-- [Official Luma3DS Repository](https://github.com/LumaTeam/Luma3DS)
-- [Official Releases](https://github.com/LumaTeam/Luma3DS/releases)
-- [Luma3DS Source Code](https://github.com/LumaTeam/Luma3DS/tree/master)
-- [Luma3DS Documentation](https://github.com/LumaTeam/Luma3DS/tree/master/docs)
-- [boot9strap Repository](https://github.com/SciresM/boot9strap)
-- [Luma3DS License](https://github.com/LumaTeam/Luma3DS/blob/master/LICENSE)
+- [Original EZ Flash Junior Kernel Mod Repository](https://github.com/lukesau/ezgb)
+- [Official Project Releases](https://github.com/lukesau/ezgb/releases)
+- [EZ Flash Official Website](https://www.ezflash.cn/)
+- [RGBDS Development Tools](https://github.com/gbdev/rgbds)
+- [SameBoy Emulator](https://github.com/LIJI32/SameBoy)
+- [Game Boy Development Resources](https://github.com/gbdev/awesome-gbdev)
 
 <p align="center">
-  <strong>Luma3DS Custom Firmware</strong>
+  <strong>EZ Flash Junior Kernel Mod</strong>
   <br>
-  Nintendo 3DS · Nintendo 2DS · System Software
+  Nintendo Game Boy · Game Boy Color · Cartridge Firmware
   <br>
-  Firmware Architecture and System-Level Development
+  Firmware Reverse Engineering and Development
 </p>
